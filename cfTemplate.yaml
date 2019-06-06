@@ -1,19 +1,19 @@
 Parameters:
   pollerFunctionCode:
     Type: String
-    Default: "pollURL.zip"
+    Default: "pollURL/pollURL.zip"
   pollerHandler:
     Type: String
     Default: 'lambda_function.lambda_handler'
   pullerFunctionCode:
     Type: String
-    Default: "pullURLs.zip"
+    Default: "pullURLs/pullURLs.zip"
   pullerHandler:
     Type: String
     Default: 'lambda_function.lambda_handler'
   testRecordsCode:
     Type: String
-    Default: 'testRecords.zip'
+    Default: 'testRecords/testRecords.zip'
   testRecordsHandler:
     Type: String
     Default: 'testRecords.lambda_handler'
@@ -191,7 +191,7 @@ Resources:
       Tags: 
         - 
           Key: "Environment"
-          Value: "url.poller"
+          Value: !Ref pollerAppName
       Timeout: 30
   urlPullerRole:
     Type: "AWS::IAM::Role"
@@ -264,7 +264,7 @@ Resources:
       Tags: 
         - 
           Key: "Environment"
-          Value: !Ref appName
+          Value: !Ref pollerAppName
       Timeout: 30
   testRecordsRole:
     Type: "AWS::IAM::Role"

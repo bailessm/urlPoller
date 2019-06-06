@@ -6,11 +6,10 @@ stackName="PollerStack"
 #last line in this file to change back to the default profile after the 
 #script completes.
 
-#export AWS_DEFAULT_PROFILE=admin
+export AWS_DEFAULT_PROFILE=admin
 
-region='us-east-1'
-pullFunction="pullURLs.zip"
-pollFunction="pollURL.zip"
+region='us-east-2'
+
 
 ##Create a bucket to hold lambda function code
 aws cloudformation create-stack --stack-name $stackName-Bucket --template-body file://codeBucket.yaml --region $region
@@ -31,13 +30,12 @@ s3BucketArn=${s3BucketArn//$' '/}
 bucketName=${s3BucketArn//$'arn:aws:s3:::'/}
 
 ##upload the lambda code to the code bucket
-aws s3 cp pollURL s3://$bucketName/ --recursive --exclude "*" --include "*.zip"
-aws s3 cp pullURLs s3://$bucketName/ --recursive --exclude "*" --include "*.zip"
+aws s3 cp . s3://$bucketName/ --recursive --exclude "*" --include "*.zip"
 
 ##Create URL Poller stack
 aws cloudformation create-stack --stack-name $stackName \
     --template-body file://cfTemplate.yaml \
-    --parameters ParameterKey=codeBucket,ParameterValue=$bucketName ParameterKey=pollerFunctionCode,ParameterValue=$pollFunction ParameterKey=pullerFunctionCode,ParameterValue=$pullFunction \
+    --parameters ParameterKey=codeBucket,ParameterValue=$bucketName \
     --capabilities CAPABILITY_IAM --region $region
 
 #Wait for the stack to be created
@@ -57,4 +55,4 @@ rm outputfile.txt
 
 #Uncomment the following line if you had to change the default profile for this script
 
-#unset AWS_DEFAULT_PROFILE
+unset AWS_DEFAULT_PROFILE
