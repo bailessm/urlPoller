@@ -1,15 +1,27 @@
 #! /bin/bash
-stackName="PollerStack"
+for ARGUMENT in "$@"
+do
 
-#If you use another cli profile for elevated priviledges uncomment the
-#followind line and modify it with your profile name.  Also uncomment the
-#last line in this file to change back to the default profile after the 
-#script completes.
+    KEY=$(echo $ARGUMENT | cut -f1 -d=)
+    VALUE=$(echo $ARGUMENT | cut -f2 -d=)   
 
-export AWS_DEFAULT_PROFILE=admin
+    case "$KEY" in
+            --stackName)    stackName=${VALUE} ;;
+            --region)   region=${VALUE} ;;
+            --defaultProfile) defaultProfile=${VALUE} ;;  
+            *)   
+    esac    
 
-region='us-east-2'
+done
 
+stackName=${stackName:-'instanceScheduler'}
+region=${region:-'us-east-1'}
+
+
+if [ ! -z $defaultProfile ] 
+then 
+    export AWS_DEFAULT_PROFILE=$defaultProfile
+fi
 
 ##Create a bucket to hold lambda function code
 aws cloudformation create-stack --stack-name $stackName-Bucket --template-body file://codeBucket.yaml --region $region
@@ -53,6 +65,7 @@ lambdaArn=${lambdaArn//'"'}
 aws lambda invoke --function-name $lambdaArn --region $region outputfile.txt
 rm outputfile.txt
 
-#Uncomment the following line if you had to change the default profile for this script
-
-unset AWS_DEFAULT_PROFILE
+if [ ! -z $defaultProfile ] 
+then 
+    unset AWS_DEFAULT_PROFILE
+fi
