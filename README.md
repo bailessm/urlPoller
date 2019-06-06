@@ -16,7 +16,7 @@ The DynamoDB Table created contains urls that you want to poll. The records are 
 ```
 The URLid is just a hash for the partition key and then the fields are created in 3 sections for flexibility.
 
-Their is a cloudwatch event created that by default, runs once every minute.  This event kicks off the pullURLs function that scans the dynamodb table and creates a cloudwatch event for each url.
+There is a cloudwatch event created that by default, runs once every minute.  This event kicks off the pullURLs function that scans the dynamodb table and creates a cloudwatch event for each url.
 
 The second cloudwatch event rule, are triggered when these first events are generated.  These rules pass the url to the pollURL function to use the request python function to poll the url. The interesting responses are then sent to cloudwatch as custom metrics for monitoring.  Currently I'm only sending two metrics per url.
 
@@ -32,5 +32,14 @@ cd urlPoller
 bash deploy.sh
 ~~~~
 
-This script will use your aws cli credentials to create all of the aws assets for this project.  If you use a different cli profile for elevated priviledges, you can uncomment line 10 and 67 of deploy.sh
-and modify line 10 to meet your needs.
+You can pass the following variables if you would like to modify the defaults to deploy.sh. All named variables are optional and must be passed as --"variable name"="variable value"
+
+~~~~
+  --stackName=
+  --region=
+  --defaultProfile=
+
+  #example...
+  bash deploy.sh --stackName=instanceScheduler-West --region=us-west-2 --defaultProfile=admin
+~~~~
+
