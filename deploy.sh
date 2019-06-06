@@ -45,21 +45,15 @@ echo "Please wait for the stack to be created..."
 aws cloudformation wait stack-create-complete --stack-name $stackName --region $region
 echo "The stack application is ready, loading test URLs..."
 
-##Pull the DynamoDBTable Output from the Stack
-dbTableArn=$(aws cloudformation describe-stacks --stack-name $stackName \
-    --query 'Stacks[0].Outputs[?OutputKey==`DynamoDBTable`].OutputValue[]' --region $region)
+lambdaArn=$(aws cloudformation describe-stacks --stack-name $stackName \
+    --query 'Stacks[0].Outputs[?OutputKey==`testRecordsFunction`].OutputValue[]' --region $region)
 
-##Pull the DDBTable from the ARN
-dbTableArn="${dbTableArn//[}"
-dbTableArn="${dbTableArn//]}"
-dbTableArn=$(tr '/' ';' <<<$dbTableArn)
-dbTable="$(echo $dbTableArn | cut -d';' -f2)"
-dbTable=${dbTable//$'\n'/}
-dbTable=${dbTable//$'"'/}
+lambdaArn="${lambdaArn//[}"
+lambdaArn="${lambdaArn//]}"
+lambdaArn=${lambdaArn//'"'}
 
-##Create two test records for the poller
-aws dynamodb put-item --table-name $dbTable --item '{"URLid": {"S": "9834u5jlk"},"protocol": {"S": "http"},"hostname": {"S": "cnn.com"},"path": {"S": "/"}}' --region $region
-aws dynamodb put-item --table-name $dbTable --item '{"URLid": {"S": "2345sdf23"},"protocol": {"S": "https"},"hostname": {"S": "amazon.com"},"path": {"S": "/"}}' --region $region
+aws lambda invoke --function-name $lambdaArn --region $region outputfile.txt
+rm outputfile.txt
 
 #Uncomment the following line if you had to change the default profile for this script
 
