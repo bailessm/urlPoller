@@ -1,19 +1,19 @@
 Parameters:
   pollerFunctionCode:
     Type: String
-    Default: "pollURL/pollURL.zip"
+    Default: "pollURL-latest.zip"
   pollerHandler:
     Type: String
-    Default: 'lambda_function.lambda_handler'
+    Default: 'pollURL.lambda_handler'
   pullerFunctionCode:
     Type: String
-    Default: "pullURLs/pullURLs.zip"
+    Default: "pullURLs-latest.zip"
   pullerHandler:
     Type: String
-    Default: 'lambda_function.lambda_handler'
+    Default: 'pullURLs.lambda_handler'
   testRecordsCode:
     Type: String
-    Default: 'testRecords/testRecords.zip'
+    Default: 'testRecords-latest.zip'
   testRecordsHandler:
     Type: String
     Default: 'testRecords.lambda_handler'
